@@ -9,3 +9,4 @@ Instructions:
 2. Change the interface in check_prefix.sh to your LAN interface.
 3. Change the address at the end of serve_metrics.py to the LAN address of the machine.
 4. Run the container with host networking.
+5. Configure Prometheus to scrape the metric and send an alert when it turns to 1.
