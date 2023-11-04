@@ -3,25 +3,26 @@
 import http.server
 import socketserver
 
+# Define the IP address and port
+IP_ADDRESS = "10.0.0.1"
 PORT = 9101
-METRICS_FILE = '/tmp/metrics.txt'
 
 class MetricsHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Content-Type', 'text/plain; version=0.0.4')
-        self.send_header('Access-Control-Allow-Origin', 'http://10.0.0.0')  # Allow access from the entire 10.0.0.0/24 subnet
+        self.send_header('Access-Control-Allow-Origin', f'http://{IP_ADDRESS}')  # Allow access from the specified IP
         http.server.SimpleHTTPRequestHandler.end_headers(self)
 
     def do_GET(self):
         # Handle GET request, serve metrics from METRICS_FILE
-        with open(METRICS_FILE, 'r') as f:
+        with open('/tmp/metrics.txt', 'r') as f:
             self.send_response(200)
             self.end_headers()
             self.wfile.write(f.read().encode())
 
 Handler = MetricsHandler
 
-httpd = socketserver.TCPServer(("", PORT), Handler)
+httpd = socketserver.TCPServer((IP_ADDRESS, PORT), Handler)
 
-print("Serving metrics at http://10.0.0.1:9101/metrics")
+print(f"Serving metrics at http://{IP_ADDRESS}:{PORT}/metrics")
 httpd.serve_forever()
